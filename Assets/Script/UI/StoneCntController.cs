@@ -1,15 +1,18 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 
 namespace OthelloGameProj
 {
+    /// <summary>
+    /// çŸ³ã®æ•°ã®è¡¨ç¤ºå‡¦ç†ã¾ã¨ã‚
+    /// </summary>
     public class StoneCntController : MonoBehaviour
     {
-        [SerializeField, Header("•Î‚Ì”")]
+        [SerializeField, Header("é»’çŸ³ã®æ•°")]
         private TextMeshProUGUI blackCntLabel;
-        [SerializeField, Header("”’Î‚Ì”")]
+        [SerializeField, Header("ç™½çŸ³ã®æ•°")]
         private TextMeshProUGUI whiteCntLabel;
-        [SerializeField, Header("ƒ{[ƒh‚Ì§Œäˆ—ƒIƒuƒWƒFƒNƒg")]
+        [SerializeField, Header("ãƒœãƒ¼ãƒ‰ã®åˆ¶å¾¡å‡¦ç†ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
         private BoardController boardController;
 
         void Start()

@@ -13,6 +13,10 @@ namespace OthelloGameProj
         /// </summary>
         public bool IsGameStart { get; set; }
         /// <summary>
+        /// オプション画面を開いているかどうか
+        /// </summary>
+        public bool IsOpenOption { get; set; }
+        /// <summary>
         /// プレイヤーの石の色
         /// </summary>
         public GameConst.StoneType PlayerType { get; set; } 
@@ -52,14 +56,26 @@ namespace OthelloGameProj
             GameSettingInfo = new GameSettingInfo();
         }
 
+        /// <summary>
+        /// ゲームの初期化
+        /// </summary>
         public void Init()
         {
-            // ゲーム難易度(デファルト)
+            // ゲーム難易度
+            BlackStoneList = new List<GameObject>();
+            WhiteStoneList = new List<GameObject>();
             PlayerType = GameSettingInfo.GetStoneType();
             if (PlayerType == GameConst.StoneType.white) { NpcType = GameConst.StoneType.black; }
             else if (PlayerType == GameConst.StoneType.black) { NpcType |= GameConst.StoneType.white; }
             PlayerWinOrLose = GameConst.GameWinOrLoss.None;
             PassCnt = 0;
+        }
+
+        public void SetGameSettingInfo(GameConst.GameDifficulty difficulty, GameConst.StoneType stoneType, int handi)
+        {
+            GameSettingInfo.SetGameDifficulty(difficulty);
+            GameSettingInfo.SetStoneType(stoneType);
+            GameSettingInfo.SetHandicap(handi);
         }
 
         /// <summary>

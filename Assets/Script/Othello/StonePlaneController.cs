@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace OthelloGameProj
@@ -293,6 +294,19 @@ namespace OthelloGameProj
         }
 
         /// <summary>
+        /// 置ける場所マテリアルが光っているかどうか確認処理
+        /// </summary>
+        /// <param name="stonePlane">置ける場所</param>
+        /// <returns></returns>
+        public bool CheckPlaneMaterial(StonePlane stonePlane)
+        {
+            if (stonePlane == null) return false;
+            if (!stonePlane.gameObject.TryGetComponent<MeshRenderer>(out var renderer)) return false;
+
+            return renderer.material.name.Contains(planeActiveMaterial.name);
+        }
+
+        /// <summary>
         /// 勝敗判定
         /// </summary>
         /// <param name="stoneType">プレイヤーかNPCの石の色</param>
@@ -306,6 +320,8 @@ namespace OthelloGameProj
             {
                 if (OthelloGameManager.Instance.WhiteStoneList.Count > OthelloGameManager.Instance.BlackStoneList.Count)
                     return true;
+                else if (OthelloGameManager.Instance.BlackStoneList.Count < OthelloGameManager.Instance.WhiteStoneList.Count)
+                    return false;
 
                 cnt = OthelloGameManager.Instance.WhiteStoneList.Count + emptyStoneList.Count;
                 opponentCnt = OthelloGameManager.Instance.BlackStoneList.Count;
@@ -314,6 +330,8 @@ namespace OthelloGameProj
             {
                 if (OthelloGameManager.Instance.BlackStoneList.Count > OthelloGameManager.Instance.WhiteStoneList.Count)
                     return true;
+                else if (OthelloGameManager.Instance.WhiteStoneList.Count < OthelloGameManager.Instance.BlackStoneList.Count)
+                    return false;
 
                 cnt = OthelloGameManager.Instance.BlackStoneList.Count + emptyStoneList.Count;
                 opponentCnt = OthelloGameManager.Instance.WhiteStoneList.Count;

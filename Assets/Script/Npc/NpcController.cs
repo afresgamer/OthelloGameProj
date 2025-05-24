@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,6 +17,8 @@ namespace OthelloGameProj
         private BoardController boardController;
         [SerializeField, Header("置ける場所の可視化の制御オブジェクト")]
         private StonePlaneController stonePlaneController;
+        [SerializeField, Header("石置く時のSE音源")]
+        private AudioClip putStoneClip;
 
         // 置けるセルの座標情報リスト
         public List<StonePlane> StonePlaneList { get; private set; }
@@ -29,11 +32,13 @@ namespace OthelloGameProj
         void Update()
         {
             // ゲームスタートしてなかったらプレイヤー操作不可
-            if (!OthelloGameManager.Instance.IsGameStart) { return; }
+            if (!OthelloGameManager.Instance.IsGameStart) return;
+            // オプション画面が開いていたらプレイヤー操作不可
+            if (OthelloGameManager.Instance.IsOpenOption) return;
             //　勝敗が決定したら操作不可
-            if (OthelloGameManager.Instance.PlayerWinOrLose != GameConst.GameWinOrLoss.None) { return; }
+            if (OthelloGameManager.Instance.PlayerWinOrLose != GameConst.GameWinOrLoss.None) return;
 
-            if (!IsSetController()) { return; }
+            if (!IsSetController()) return;
 
             // Npcの番だったら場所表示をして、思考フェーズを行う
             // 思考フェーズで置き場所確定後にアクションしてからプレイヤーに手番を移行
@@ -70,7 +75,6 @@ namespace OthelloGameProj
                 // 置き場所が0箇所　または　置いている最中は何もしない
                 if (StonePlaneList.Count == 0)
                 {
-                    //if (isPut) return true;
                     // 勝敗判定
                     if (stonePlaneController.CheckWinOrLose(OthelloGameManager.Instance.NpcType))
                         OthelloGameManager.Instance.PlayerWinOrLose = GameConst.GameWinOrLoss.NPCWin;
@@ -81,7 +85,7 @@ namespace OthelloGameProj
                 }
                 if (isPut) return true;
 
-                var stonePlane = new StonePlane();
+                StonePlane stonePlane = new StonePlane();
                 switch (OthelloGameManager.Instance.GameSettingInfo.GetGameDifficulty())
                 {
                     case GameConst.GameDifficulty.Easy:
@@ -89,10 +93,12 @@ namespace OthelloGameProj
                         PutStone(stonePlane);
                         break;
                     case GameConst.GameDifficulty.Normal:
-
+                        stonePlane = ConsiderPointNormal(StonePlaneList);
+                        PutStone(stonePlane);
                         break;
                     case GameConst.GameDifficulty.Hard:
-
+                        stonePlane = ConsiderPointHard(StonePlaneList);
+                        PutStone(stonePlane);
                         break;
                 }
 
@@ -105,8 +111,8 @@ namespace OthelloGameProj
         /// <summary>
         /// ゲーム難易度が簡単の場合の場所決定処理
         /// </summary>
-        /// <param name="stonePlaneList"></param>
-        /// <returns></returns>
+        /// <param name="stonePlaneList">置ける場所のリスト</param>
+        /// <returns>置く場所</returns>
         private StonePlane ConsiderPointEasy(List<StonePlane> stonePlaneList)
         {
             if (stonePlaneList == null ||  stonePlaneList.Count == 0) { return null; }
@@ -114,6 +120,32 @@ namespace OthelloGameProj
             int cnt = stonePlaneList.Count;
             var randomNum = Random.Range(0, cnt);
             return stonePlaneList[randomNum];
+        }
+
+        /// <summary>
+        /// ゲーム難易度が普通の場合の場所決定処理
+        /// </summary>
+        /// <param name="stonePlaneList">置ける場所のリスト</param>
+        /// <returns>置く場所</returns>
+        private StonePlane ConsiderPointNormal(List<StonePlane> stonePlaneList)
+        {
+            if (stonePlaneList == null || stonePlaneList.Count == 0) { return null; }
+
+            var result = boardController.GetMaxScorePlane(OthelloGameManager.Instance.NpcType, stonePlaneList);
+            return result;
+        }
+
+        /// <summary>
+        /// ゲーム難易度が難しいの場合の場所決定処理
+        /// </summary>
+        /// <param name="stonePlaneList">置ける場所のリスト</param>
+        /// <returns>置く場所</returns>
+        private StonePlane ConsiderPointHard(List<StonePlane> stonePlaneList)
+        {
+            if (stonePlaneList == null || stonePlaneList.Count == 0) { return null; }
+
+            var result = boardController.SearchNegaAlphaStone(stonePlaneList, 3, true);
+            return result;
         }
 
         /// <summary>
@@ -129,10 +161,8 @@ namespace OthelloGameProj
             // 置くandひっくり返す
             boardController.AddStone(stonePlane.StoneInfo, OthelloGameManager.Instance.NpcType);
             stonePlaneController.SetPlane(stonePlane, false);
-            boardController.TurnoverStone(stonePlane.StoneInfo, OthelloGameManager.Instance.NpcType, async () =>
+            boardController.TurnoverStone(stonePlane.StoneInfo, OthelloGameManager.Instance.NpcType, () =>
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(1f));
-
                 // 順番の更新
                 FlowManager.Instance.SetState(GameConst.GameState.PlayerTurn);
                 FlowManager.Instance.SetTurn(1);
@@ -143,6 +173,7 @@ namespace OthelloGameProj
                 isPut = false;
             });
 
+            AudioController.Instance.PlaySE(putStoneClip);
         }
     }
 }

@@ -2,6 +2,10 @@
 using System.Linq;
 using UnityEngine;
 using DG.Tweening;
+using UnityEditor;
+using static OthelloGameProj.GameConst;
+using Unity.VisualScripting;
+using static UnityEditor.Progress;
 
 namespace OthelloGameProj
 {
@@ -32,6 +36,7 @@ namespace OthelloGameProj
             InitBoard(GameConst.StoneType.empty);
 
             GameStartBoard(OthelloGameManager.Instance.PlayerType);
+            HandicapStone();
             planeController.SetStonePlane(OthelloGameManager.Instance.PlayerType);
             FlowManager.Instance.SetState(GameConst.GameState.PlayerTurn);
         }
@@ -148,6 +153,83 @@ namespace OthelloGameProj
             plane002.StoneInfo = stoneInfo002;
             plane003.StoneInfo = stoneInfo003;
             plane004.StoneInfo = stoneInfo004;
+        }
+
+        /// <summary>
+        /// ハンデを設定する
+        /// </summary>
+        public void HandicapStone()
+        {
+            var handicap = OthelloGameManager.Instance.GameSettingInfo.GetHandicap();
+            // ハンデがない場合、処理を終える
+            if (handicap == 0) return;
+
+            // NPCにハンデを与える(プレイヤーが不利になる)
+            if (handicap > 0) SetCornerStone(handicap, OthelloGameManager.Instance.NpcType);
+            // プレイヤーにハンデを与える(NPCが不利になる)
+            else if (handicap < 0) SetCornerStone(handicap, OthelloGameManager.Instance.PlayerType);
+        }
+
+        /// <summary>
+        /// 角に石を設定する
+        /// </summary>
+        /// <param name="handicap">ハンデ</param>
+        /// <param name="stoneType">石の色</param>
+        private void SetCornerStone(int handicap, GameConst.StoneType stoneType)
+        {
+            var leftTopCornerstone = OthelloGameManager.Instance.NowCellArray[0, 0];
+            var rightTopCornerstone = OthelloGameManager.Instance.NowCellArray[0, GameConst.CORNER_POINT];
+            var leftBottomCornerstone = OthelloGameManager.Instance.NowCellArray[GameConst.CORNER_POINT, 0];
+            var rightBottomCornerstone = OthelloGameManager.Instance.NowCellArray[GameConst.CORNER_POINT, GameConst.CORNER_POINT];
+
+            var leftTopPlane = planeController.StonePlaneArray[0, 0];
+            var rightTopPlane = planeController.StonePlaneArray[0, GameConst.CORNER_POINT];
+            var leftBottomPlane = planeController.StonePlaneArray[GameConst.CORNER_POINT, 0];
+            var rightBottomPlane = planeController.StonePlaneArray[GameConst.CORNER_POINT, GameConst.CORNER_POINT];
+
+            handicap = Mathf.Abs(handicap);
+            if (handicap == GameConst.ONE_CORNER)
+            {
+                leftTopCornerstone.SetStoneType(stoneType);
+                CreateStone(leftTopCornerstone);
+                leftTopPlane.StoneInfo = leftTopCornerstone;
+            }
+            else if (handicap == GameConst.TWO_CORNER)
+            {
+                leftTopCornerstone.SetStoneType(stoneType);
+                CreateStone(leftTopCornerstone);
+                leftTopPlane.StoneInfo = leftTopCornerstone;
+                rightTopCornerstone.SetStoneType(stoneType);
+                CreateStone(rightTopCornerstone);
+                rightTopPlane.StoneInfo = rightTopCornerstone;
+            }
+            else if (handicap == GameConst.THREE_CORNER)
+            {
+                leftTopCornerstone.SetStoneType(stoneType);
+                CreateStone(leftTopCornerstone);
+                leftTopPlane.StoneInfo = leftTopCornerstone;
+                rightTopCornerstone.SetStoneType(stoneType);
+                CreateStone(rightTopCornerstone);
+                rightTopPlane.StoneInfo = rightTopCornerstone;
+                leftBottomCornerstone.SetStoneType(stoneType);
+                CreateStone(leftBottomCornerstone);
+                leftBottomPlane.StoneInfo = leftBottomCornerstone;
+            }
+            else if (handicap == GameConst.FOUR_CORNER)
+            {
+                leftTopCornerstone.SetStoneType(stoneType);
+                CreateStone(leftTopCornerstone);
+                leftTopPlane.StoneInfo = leftTopCornerstone;
+                rightTopCornerstone.SetStoneType(stoneType);
+                CreateStone(rightTopCornerstone);
+                rightTopPlane.StoneInfo = rightTopCornerstone;
+                leftBottomCornerstone.SetStoneType(stoneType);
+                CreateStone(leftBottomCornerstone);
+                leftBottomPlane.StoneInfo = leftBottomCornerstone;
+                rightBottomCornerstone.SetStoneType(stoneType);
+                CreateStone(rightBottomCornerstone);
+                rightBottomPlane.StoneInfo = rightBottomCornerstone;
+            }
         }
 
         /// <summary>
@@ -320,6 +402,237 @@ namespace OthelloGameProj
                 // 確認座標を次に進める
                 h += horizontal;
                 v += vertical;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 最大スコアの置ける場所を取得する
+        /// </summary>
+        /// <param name="stoneType">NPCの石の色</param>
+        /// <param name="stonePlaneList">置ける場所のリスト</param>
+        /// <returns>置ける場所</returns>
+        public StonePlane GetMaxScorePlane(GameConst.StoneType stoneType, List<StonePlane> stonePlaneList)
+        {
+            var result = new StonePlane();
+            var dataList = new List<StonePlane>();
+
+            //まずは現状の評価値を産出
+            var currentCnt = EvaluateStoneInfo(OthelloGameManager.Instance.NowCellArray, stoneType);
+
+            // 引数からクローンを作成
+            var planeArray = stonePlaneList.ToArray().Clone() as StonePlane[];
+            // 置ける場所を順番に評価して現状の評価値以上のものをリスト化する
+            foreach (var item in planeArray)
+            {
+                item.StoneInfo.SetStoneType(stoneType);
+
+                var stoneInfoArray = GetPutStoneInfo(OthelloGameManager.Instance.NowCellArray, item.StoneInfo, item.StoneInfo.GetCell());
+                var cnt = EvaluateStoneInfo(stoneInfoArray, stoneType);
+
+                item.StoneInfo.SetStoneType(GameConst.StoneType.empty);
+
+                if (currentCnt >= cnt)
+                {
+                    dataList.Add(item);
+                }
+            }
+
+            // リストが一つもない場合は元の要素からランダム取得
+            if (dataList.Count == 0)
+            {
+                int randomNum = Random.Range(0, stonePlaneList.Count);
+                result = stonePlaneList[randomNum];
+            }
+            // リストが１つよりも大きい場合はランダム取得
+            else if (dataList.Count > 1)
+            {
+                int randomNum =  Random.Range(0, dataList.Count);
+                result = dataList[randomNum];
+            }
+            // リストが1つのみの場合は最初の要素を取得
+            else result = dataList[0];
+
+            return result;
+        }
+
+        /// <summary>
+        /// NegaAlphaアルゴリズムによるストーンの探索
+        /// </summary>
+        /// <param name="stonePlaneList">置ける場所のリスト</param>
+        /// <param name="depth">探索する深さ</param>
+        /// <param name="isRandom">スコアが同じだった場合にランダムにするか？</param>
+        /// <returns>探索したストーン</returns>
+        public StonePlane SearchNegaAlphaStone(List<StonePlane> stonePlaneList, int depth, bool isRandom = false)
+        {
+            // 探索したストーン
+            StonePlane result = null;
+
+            var alpha = int.MinValue + 1; // MinValueを反転するとintの範囲を超えてしまうため、+1する
+            var beta = int.MaxValue;
+            // 引数からクローンを作成
+            var planeArray = stonePlaneList.ToArray().Clone() as StonePlane[];
+
+            foreach (var putStoneIndex in planeArray)
+            {
+                // 置いた後の状態にセル情報を仮更新する
+                putStoneIndex.StoneInfo.SetStoneType(OthelloGameManager.Instance.NpcType);
+
+                // 次の階層の状態を調べる
+                var putStoneArray = GetPutStoneInfo(OthelloGameManager.Instance.NowCellArray, putStoneIndex.StoneInfo, putStoneIndex.StoneInfo.GetCell());
+                var score = -1 * GetNegaAlphaScore(GetReverseStoneState(putStoneIndex.StoneInfo), depth - 1, -beta, -alpha);
+
+                // 仮更新したプレーン情報を元の空欄に戻す
+                putStoneIndex.StoneInfo.SetStoneType(GameConst.StoneType.empty);
+
+                // 最大スコアの場合、スコアと該当インデックスを保持
+                if (alpha < score)
+                {
+                    alpha = score;
+                    result = putStoneIndex;
+                }
+                else if (isRandom && alpha == score && UnityEngine.Random.Range(0, 2) == 0)
+                {
+                    // スコアが同じだったら1/2の確率で入れ替える
+                    alpha = score;
+                    result = putStoneIndex;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// NegaAlphaアルゴリズムによるスコアの計算
+        /// </summary>
+        /// <param name="putInfo">置くストーン状態</param>
+        /// <param name="depth">探索する深さ</param>
+        /// <param name="alpha">探索範囲の下限</param>
+        /// <param name="beta">探索範囲の上限</param>
+        /// <param name="isPrevPassed">上の階層でパスしたか？</param>
+        /// <returns>指定階層の最大スコア</returns>
+        private int GetNegaAlphaScore(StoneInfo putInfo, int depth, int alpha, int beta, bool isPrevPassed = false)
+        {
+            // 葉ノードで評価関数を実行
+            if (depth == 0) return EvaluateStoneInfo(OthelloGameManager.Instance.NowCellArray, OthelloGameManager.Instance.NpcType);
+
+            // 置くことが可能なストーンを全て調べる
+            var maxScore = int.MinValue;
+            var canPutStoneInfoList = planeController.GetStonePlaneList(OthelloGameManager.Instance.NpcType);
+
+
+            foreach (var putStonePlane in canPutStoneInfoList)
+            {
+                // 次の階層の状態を調べる
+                var putStoneArray = GetPutStoneInfo(OthelloGameManager.Instance.NowCellArray, putStonePlane.StoneInfo, putStonePlane.StoneInfo.GetCell());
+                var score = -1 * GetNegaAlphaScore(GetReverseStoneState(putInfo), depth - 1, -beta, -alpha);
+
+                // NegaMax値が探索範囲の上限より上の場合は枝狩り
+                if (score >= beta) return score;
+
+                // alpha値、maxScoreを更新
+                alpha = Mathf.Max(alpha, score);
+                maxScore = Mathf.Max(maxScore, score);
+            }
+
+            // 見つからなかった場合
+            if (maxScore == int.MinValue)
+            {
+                // ２回連続パスの場合、評価関数を実行
+                if (isPrevPassed) return EvaluateStoneInfo(OthelloGameManager.Instance.NowCellArray, OthelloGameManager.Instance.NpcType);
+                // ストーン状態はそのままで、次の階層の状態を調べる
+                return -1 * GetNegaAlphaScore(GetReverseStoneState(putInfo), depth - 1, -beta, -alpha, true);
+            }
+            // 置ける場所のリセット
+            planeController.ResetStonePlaneList();
+
+            return maxScore;
+        }
+
+        /// <summary>
+        /// 現在のストーンに対する評価値の計算
+        /// </summary>
+        /// <param name="stoneType">石の色</param>
+        /// <returns>現在のストーンに対する評価値</returns>
+        private int EvaluateStoneInfo(StoneInfo[,] stoneInfoArray, GameConst.StoneType stoneType)
+        {
+            // 白と黒のストーン位置からそれぞれスコアを求める
+            var whiteScore = 0;
+            var blackScore = 0;
+            for (var x = 0; x < GameConst.EvaluateStoneInfoScore.GetLength(0); x++)
+            {
+                for (var y = 0; y < GameConst.EvaluateStoneInfoScore.GetLength(1); y++)
+                {
+                    var score = GameConst.EvaluateStoneInfoScore[x, y];
+                    var stoneInfo = stoneInfoArray[x, y];
+
+                    if (stoneInfo.GetStoneType() == GameConst.StoneType.white)
+                        whiteScore += score;
+                    else if (stoneInfo.GetStoneType() == GameConst.StoneType.black)
+                        blackScore += score;
+                }
+            }
+            // 自分の色のスコア - 相手の色のスコア
+            if (stoneType == GameConst.StoneType.white)
+            {
+                return whiteScore - blackScore;
+            }
+
+            return blackScore - whiteScore;
+        }
+
+        /// <summary>
+        /// 置いた後のストーン状態を返却する
+        /// </summary>
+        /// <param name="stoneStates"></param>
+        /// <param name="infoState"></param>
+        /// <param name="cell"></param>
+        /// <param name="turnStoneList"></param>
+        /// <returns>置いた後のストーン状態</returns>
+        public StoneInfo[,] GetPutStoneInfo(StoneInfo[,] stoneInfoArray, StoneInfo info, Cell cell, List<StoneInfo> turnStoneList = null)
+        {
+            // 既に置いてある場合、そのまま返す
+            if (stoneInfoArray == null || 
+                stoneInfoArray[cell.GetXPos(), cell.GetYPos()].GetStoneType() != GameConst.StoneType.empty)
+                return stoneInfoArray;
+
+            // ひっくり返せるストーンが指定されていない場合、取得する
+            turnStoneList ??= CheckPutPoint(cell.GetXPos(), cell.GetYPos(), stoneInfoArray[cell.GetXPos(), cell.GetYPos()].GetStoneType()) ? turnoverStoneList : new List<StoneInfo>();
+            if (turnStoneList.Count == 0) return stoneInfoArray;
+
+            // 引数からクローンを作成
+            var putStoneArray = stoneInfoArray.Clone() as StoneInfo[,];
+
+            // ストーンを置く
+            if (putStoneArray != null)
+            {
+                putStoneArray[cell.GetXPos(), cell.GetYPos()] = info;
+
+                // ひっくり返す
+                foreach (var turnStone in turnStoneList)
+                {
+                    putStoneArray[turnStone.GetCell().GetXPos(), turnStone.GetCell().GetYPos()] = info;
+                }
+            }
+            // ひっくり返すリストの初期化
+            turnoverStoneList.Clear();
+
+            return putStoneArray;
+        }
+
+        /// <summary>
+        /// ストーン状態を黒←→白で切り替えて返却
+        /// </summary>
+        public StoneInfo GetReverseStoneState(StoneInfo info)
+        {
+            var result = info;
+            if (info.GetStoneType() == StoneType.black)
+            {
+                info.SetStoneType(StoneType.white);
+            }
+            else if (info.GetStoneType() == StoneType.white)
+            {
+                info.SetStoneType(StoneType.black);
             }
 
             return result;

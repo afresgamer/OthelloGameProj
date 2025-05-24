@@ -13,6 +13,8 @@ namespace OthelloGameProj
         private BoardController boardController;
         [SerializeField, Header("置ける場所の可視化の制御オブジェクト")]
         private StonePlaneController stonePlaneController;
+        [SerializeField, Header("石置く時のSE音源")]
+        private AudioClip putStoneClip;
 
         PlayerInput playerInput;
         readonly float drawRayDistance = 300f;
@@ -28,11 +30,13 @@ namespace OthelloGameProj
         void Update()
         {
             // ゲームスタートしてなかったらプレイヤー操作不可
-            if (!OthelloGameManager.Instance.IsGameStart) { return; }
+            if (!OthelloGameManager.Instance.IsGameStart) return;
+            // オプション画面が開いていたらプレイヤー操作不可
+            if (OthelloGameManager.Instance.IsOpenOption) return;
             // プレイヤーのターンではない場合操作不可
-            if (!FlowManager.Instance.IsPlayerTurn()) { return; }
+            if (!FlowManager.Instance.IsPlayerTurn()) return;
             //　勝敗が決定したら操作不可
-            if (OthelloGameManager.Instance.PlayerWinOrLose != GameConst.GameWinOrLoss.None) { return; }
+            if (OthelloGameManager.Instance.PlayerWinOrLose != GameConst.GameWinOrLoss.None) return;
 
             // 置ける場所を表示
             if (CheckStonePlane())
@@ -40,8 +44,16 @@ namespace OthelloGameProj
             else stonePlaneController.UpdatePlaneMaterial(currentPlane, false);
 
             // 置ける場所を選択済み かつ クリック時
-            if (currentPlane != null && playerInput.IsClick)
+            if (stonePlaneController.CheckPlaneMaterial(currentPlane) && playerInput.IsClick)
             {
+                // オプション画面が開いていたら未選択状態にして処理を終える
+                if (OthelloGameManager.Instance.IsOpenOption)
+                {
+                    stonePlaneController.UpdatePlaneMaterial(currentPlane, false);
+                    currentPlane = null;
+                    return;
+                }
+
                 // 置ける場所を初期化
                 stonePlaneController.UpdatePlaneMaterial(currentPlane, false);
                 
@@ -58,6 +70,7 @@ namespace OthelloGameProj
                 // 置き場所の更新
                 currentPlane = null;
                 stonePlaneController.SetPlaneList(false);
+                AudioController.Instance.PlaySE(putStoneClip);
             }
         }
 
@@ -70,15 +83,13 @@ namespace OthelloGameProj
             Ray ray = Camera.main.ScreenPointToRay(playerInput.MousePos);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, drawRayDistance, layerMask))
             {
-                Debug.DrawRay(ray.origin, ray.direction * drawRayDistance, Color.green, 5, false);
                 if (hitInfo.collider.gameObject.TryGetComponent<StonePlane>(out var plane))
                 {
                     var cell = plane.StoneInfo.GetCell();
-                    CustomDebugger.ColorLog("x:" + cell.GetXPos() + " y:" + cell.GetYPos(), GameConst.LogLevel.Lime);
                     currentPlane = plane;
-
                     return true;
                 }
+                else currentPlane = null;
             }
             return false;
         }

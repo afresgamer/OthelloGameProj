@@ -27,20 +27,23 @@ namespace OthelloGameProj
         Sequence sequence;
         private readonly Color InitFadeColor = new Color(0, 0, 0, 0);
         private readonly float IntervalTime = 1.0f;
+        bool isSetResult = false;
 
         void Start()
         {
             gameStateLabel.text = string.Empty;
             resultObj.SetActive(false);
             StartFade();
+            isSetResult = false;
         }
 
         void Update()
         {
-            if (OthelloGameManager.Instance.PlayerWinOrLose != GameConst.GameWinOrLoss.None)
+            if (OthelloGameManager.Instance.PlayerWinOrLose != GameConst.GameWinOrLoss.None && !isSetResult)
             {
                 gameStateLabel.text = string.Empty;
                 SetResultObj();
+                isSetResult = true;
             }
 
             switch (FlowManager.Instance.NowGameState) 
@@ -78,6 +81,8 @@ namespace OthelloGameProj
             OthelloGameManager.Instance.IsGameStart = true;
             // ボードの制御処理オブジェクトの初期化
             boardController.Init();
+            // BGMの変更
+            AudioController.Instance.Init();
 
             sequence = DOTween.Sequence();
             sequence.Append(fadeImage.DOColor(InitFadeColor, alphaSpeed));
@@ -87,6 +92,11 @@ namespace OthelloGameProj
                     CustomDebugger.ColorLog("ゲームメインを開始します", GameConst.LogLevel.Lime);
                     fadeImage.gameObject.SetActive(false);
                 });
+        }
+
+        private void OnEnable()
+        {
+            sequence = DOTween.Sequence();
         }
 
         private void OnDisable()

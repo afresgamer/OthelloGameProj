@@ -43,6 +43,10 @@ namespace OthelloGameProj
         // ハンデ
         public const int MAX_CORNER_CNT = 4;
         public const int CORNER_POINT = 7;
+        public const int ONE_CORNER = 1;
+        public const int TWO_CORNER = 2;
+        public const int THREE_CORNER = 3;
+        public const int FOUR_CORNER = 4;
 
         // ゲーム状態
         public enum GameState 
@@ -69,5 +73,19 @@ namespace OthelloGameProj
         public const string NPC_WIN_LABEL = "NPC Win";
         // パス最大回数
         public const int PASS_MAX_CNT = 3;
+
+        /// <summary>
+        /// 石に対する評価値
+        /// </summary>
+        public static int[,] EvaluateStoneInfoScore = new[,] {
+            { 30,  -12,  0,  -1,  -1,  0,  -12, 30 },
+            { -12, -15,  -3, -3,  -3,  -3, -15, -12 },
+            { 0,   -3,   0,  -1,  -1,  0,  -3,  0 },
+            { -1,  -3,   -1, -1,  -1,  -1, -3,  -1 },
+            { -1,  -3,   -1, -1,  -1,  -1, -3,  -1 },
+            { 0,   -3,   0,  -1,  -1,  0,  -3,  0 },
+            { -12, -15,  -3, -3,  -3,  -3, -15, -12 },
+            { 30,  -12,  0,  -1,  -1,  0,  -12, 30 },
+        };
     }
 }

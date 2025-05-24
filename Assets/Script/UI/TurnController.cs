@@ -1,11 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
 namespace OthelloGameProj
 {
+    /// <summary>
+    /// ターン数の表示制御のまとめ
+    /// </summary>
     public class TurnController : MonoBehaviour
     {
-        [SerializeField, Header("�^�[����")]
+        [SerializeField, Header("ターン数")]
         private TextMeshProUGUI turnLabel;
 
         void Start()

@@ -7,7 +7,7 @@ namespace OthelloGameProj
     /// </summary>
     public class StonePlane : MonoBehaviour
     {
-        public StoneInfo StoneInfo { get; set; } = new StoneInfo();
+        public StoneInfo StoneInfo { get; set; }
     }
 }
 

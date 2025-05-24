@@ -1,9 +1,11 @@
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace OthelloGameProj
 {
+    /// <summary>
+    /// プレイヤーの入力管理まとめ
+    /// </summary>
     public class PlayerInput : MonoBehaviour
     {
         public Vector2 MousePos { get; private set; }
@@ -26,6 +28,13 @@ namespace OthelloGameProj
 
         private void ClickAction(InputAction.CallbackContext obj)
         {
+            // オプション画面が開いていたら未クリックにして処理を終える
+            if (OthelloGameManager.Instance.IsOpenOption)
+            {
+                IsClick = false;
+                return;
+            }
+
             IsClick = obj.ReadValueAsButton();
         }
 

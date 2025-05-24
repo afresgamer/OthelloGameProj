@@ -1,87 +1,101 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using OthelloGameProj;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class ResultController : MonoBehaviour
+namespace OthelloGameProj
 {
-    [SerializeField, Header("Œ‹‰Ê•\¦")]
-    private TextMeshProUGUI resultLabel;
-    [SerializeField, Header("ƒvƒŒƒCƒ„[‚ÌÎ‚Ì”")]
-    private TextMeshProUGUI playerCntText;
-    [SerializeField, Header("NPC‚ÌÎ‚Ì”")]
-    private TextMeshProUGUI npcCntText;
-    [SerializeField, Header("ƒtƒF[ƒh—p‚Ì‰æ‘œ")]
-    private Image fadeImage;
-    [SerializeField, Header("ƒtƒF[ƒh‚ÌƒXƒs[ƒh")]
-    private float alphaSpeed = 1.0f;
-
-    Sequence sequence;
-
-    void Start()
+    /// <summary>
+    /// ãƒªã‚¶ãƒ«ãƒˆç”»é¢ã®è¡¨ç¤ºåˆ¶å¾¡å‡¦ç†ã¾ã¨ã‚
+    /// </summary>
+    public class ResultController : MonoBehaviour
     {
-        resultLabel.text = string.Empty;
-        playerCntText.text = string.Empty;
-        npcCntText.text = string.Empty;
-        fadeImage.gameObject.SetActive(false);
-    }
+        [SerializeField, Header("çµæœè¡¨ç¤º")]
+        private TextMeshProUGUI resultLabel;
+        [SerializeField, Header("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®çŸ³ã®æ•°")]
+        private TextMeshProUGUI playerCntText;
+        [SerializeField, Header("NPCã®çŸ³ã®æ•°")]
+        private TextMeshProUGUI npcCntText;
+        [SerializeField, Header("ãƒ•ã‚§ãƒ¼ãƒ‰ç”¨ã®ç”»åƒ")]
+        private Image fadeImage;
+        [SerializeField, Header("ãƒ•ã‚§ãƒ¼ãƒ‰ã®ã‚¹ãƒ”ãƒ¼ãƒ‰")]
+        private float alphaSpeed = 1.0f;
 
-    void Update()
-    {
-        switch (OthelloGameManager.Instance.PlayerWinOrLose)
+        Sequence sequence;
+
+        void Start()
         {
-            case GameConst.GameWinOrLoss.PlayerWin:
-                
-                resultLabel.text = GameConst.PLAYER_WIN_LABEL;
-                SetStoneCnt();
-                break;
-            case GameConst.GameWinOrLoss.NPCWin:
-                
-                resultLabel.text = GameConst.NPC_WIN_LABEL;
-                SetStoneCnt();
-                break;
-            default:
-                resultLabel.text = string.Empty;
-                break;
+            resultLabel.text = string.Empty;
+            playerCntText.text = string.Empty;
+            npcCntText.text = string.Empty;
+            fadeImage.gameObject.SetActive(false);
         }
-    }
 
-    void SetStoneCnt()
-    {
-        playerCntText.text = "Player Count: " + OthelloGameManager.Instance.GetPlayerStoneCnt().ToString();
-        npcCntText.text = "NPC Count: " + OthelloGameManager.Instance.GetNPCStoneCnt().ToString();
-    }
-
-    public void Replay()
-    {
-        fadeImage.gameObject.SetActive(true);
-        sequence = DOTween.Sequence();
-        sequence.Append(fadeImage.DOColor(Color.black, alphaSpeed));
-        sequence.Play()
-            .OnComplete(() =>
+        void Update()
+        {
+            switch (OthelloGameManager.Instance.PlayerWinOrLose)
             {
-                CustomDebugger.ColorLog("ƒQ[ƒ€ƒƒCƒ“‚É‘JˆÚ‚µ‚Ü‚·", GameConst.LogLevel.Lime);
-                OthelloGameManager.Instance.Init();
-                SceneManager.LoadScene((int)GameConst.GameState.GameStart);
-            });
-    }
+                case GameConst.GameWinOrLoss.PlayerWin:
 
-    public void ChangeToTitle()
-    {
-        fadeImage.gameObject.SetActive(true);
-        sequence = DOTween.Sequence();
-        sequence.Append(fadeImage.DOColor(Color.black, alphaSpeed));
-        sequence.Play()
-            .OnComplete(() => {
-                CustomDebugger.ColorLog("ƒQ[ƒ€ƒƒCƒ“‚É‘JˆÚ‚µ‚Ü‚·", GameConst.LogLevel.Lime);
-                SceneManager.LoadScene((int)GameConst.GameState.Title);
-            });
-    }
+                    resultLabel.text = GameConst.PLAYER_WIN_LABEL;
+                    SetStoneCnt();
+                    break;
+                case GameConst.GameWinOrLoss.NPCWin:
 
-    private void OnDisable()
-    {
-        sequence?.Kill();
+                    resultLabel.text = GameConst.NPC_WIN_LABEL;
+                    SetStoneCnt();
+                    break;
+                default:
+                    resultLabel.text = string.Empty;
+                    break;
+            }
+        }
+
+        void SetStoneCnt()
+        {
+            playerCntText.text = "Player Count: " + OthelloGameManager.Instance.GetPlayerStoneCnt().ToString();
+            npcCntText.text = "NPC Count: " + OthelloGameManager.Instance.GetNPCStoneCnt().ToString();
+        }
+
+        public void Replay()
+        {
+            fadeImage.gameObject.SetActive(true);
+            sequence = DOTween.Sequence();
+            sequence.Append(fadeImage.DOColor(Color.black, alphaSpeed));
+            sequence.Play()
+                .OnComplete(() =>
+                {
+                    CustomDebugger.ColorLog("ã‚²ãƒ¼ãƒ ãƒ¡ã‚¤ãƒ³ã«å†é·ç§»ã—ã¾ã™", GameConst.LogLevel.Lime);
+                    OthelloGameManager.Instance.Init();
+                    FlowManager.Instance.Init(GameConst.GameState.GameStart);
+                    SceneManager.LoadScene((int)GameConst.GameState.GameStart);
+                });
+        }
+
+        public void ChangeToTitle()
+        {
+            fadeImage.gameObject.SetActive(true);
+            sequence = DOTween.Sequence();
+            sequence.Append(fadeImage.DOColor(Color.black, alphaSpeed));
+            sequence.Play()
+                .OnComplete(() => {
+                    CustomDebugger.ColorLog("ã‚¿ã‚¤ãƒˆãƒ«ã«é·ç§»ã—ã¾ã™", GameConst.LogLevel.Lime);
+                    OthelloGameManager.Instance.Init();
+                    FlowManager.Instance.Init(GameConst.GameState.Title);
+                    SceneManager.LoadScene((int)GameConst.GameState.Title);
+                });
+        }
+
+        private void OnEnable()
+        {
+            sequence = DOTween.Sequence();
+        }
+
+        private void OnDisable()
+        {
+            sequence?.Kill();
+        }
     }
 }
