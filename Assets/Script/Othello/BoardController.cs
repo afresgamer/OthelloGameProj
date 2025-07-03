@@ -2,10 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using DG.Tweening;
-using UnityEditor;
 using static OthelloGameProj.GameConst;
-using Unity.VisualScripting;
-using static UnityEditor.Progress;
 
 namespace OthelloGameProj
 {
