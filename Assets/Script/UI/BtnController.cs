@@ -24,6 +24,7 @@ namespace OthelloGameProj
         [SerializeField, Header("画面サイズのスケールスピード")]
         private float scaleSpeed = 1.0f;
 
+        private readonly Vector3 ScaleSize = Vector3.one * 1.3f;
         Sequence sequence;
 
         void Start()
@@ -66,7 +67,7 @@ namespace OthelloGameProj
             AudioController.Instance.PlaySE(btnSeClip);
             optionObj.SetActive(true);
             sequence = DOTween.Sequence();
-            sequence.Append(optionObj.GetComponent<RectTransform>().DOScale(Vector3.one, scaleSpeed))
+            sequence.Append(optionObj.GetComponent<RectTransform>().DOScale(ScaleSize, scaleSpeed))
                 .SetLink(optionObj);
             sequence.Play()
                 .OnComplete(() => {
