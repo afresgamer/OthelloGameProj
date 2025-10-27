@@ -23,6 +23,8 @@ namespace OthelloGameProj
         private GameObject optionObj;
         [SerializeField, Header("画面サイズのスケールスピード")]
         private float scaleSpeed = 1.0f;
+        [SerializeField, Header("置ける場所の可視化の制御オブジェクト")]
+        private StonePlaneController stonePlaneController;
 
         private readonly Vector3 ScaleSize = Vector3.one * 1.3f;
         Sequence sequence;
@@ -57,6 +59,7 @@ namespace OthelloGameProj
         {
             AudioController.Instance.PlaySE(btnSeClip);
             OthelloGameManager.Instance.PassCnt++;
+            stonePlaneController.SetPlaneList(false);
             // 順番の更新
             FlowManager.Instance.SetState(GameConst.GameState.NpcTurn);
             FlowManager.Instance.SetTurn(1);
