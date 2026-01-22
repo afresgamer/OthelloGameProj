@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using TMPro;
-using OthelloGameProj;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using DG.Tweening;

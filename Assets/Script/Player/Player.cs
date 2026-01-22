@@ -83,6 +83,7 @@ namespace OthelloGameProj
             Ray ray = Camera.main.ScreenPointToRay(playerInput.MousePos);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, drawRayDistance, layerMask))
             {
+                Debug.DrawRay(ray.origin, ray.direction, Color.red, drawRayDistance);
                 if (hitInfo.collider.gameObject.TryGetComponent<StonePlane>(out var plane))
                 {
                     var cell = plane.StoneInfo.GetCell();

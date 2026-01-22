@@ -1,7 +1,5 @@
 ﻿using DG.Tweening;
-using OthelloGameProj;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace OthelloGameProj
@@ -26,7 +24,7 @@ namespace OthelloGameProj
         [SerializeField, Header("置ける場所の可視化の制御オブジェクト")]
         private StonePlaneController stonePlaneController;
 
-        private readonly Vector3 ScaleSize = Vector3.one * 1.3f;
+        private readonly Vector3 ScaleSize = Vector3.one;
         Sequence sequence;
 
         void Start()

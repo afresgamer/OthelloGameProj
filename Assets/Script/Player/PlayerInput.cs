@@ -9,6 +9,7 @@ namespace OthelloGameProj
     public class PlayerInput : MonoBehaviour
     {
         public Vector2 MousePos { get; private set; }
+        public Vector2 AndroidTouchPos { get; private set; }
         public bool IsClick { get; private set; }
 
         GameInput gameInput;
@@ -16,11 +17,9 @@ namespace OthelloGameProj
         private void Awake()
         {
             gameInput = new GameInput();
-            gameInput.Player.MousePos.started += MousePosAction;
             gameInput.Player.MousePos.performed += MousePosAction;
             gameInput.Player.MousePos.canceled += MousePosAction;
             gameInput.Player.Click.started += ClickAction;
-            gameInput.Player.Click.performed += ClickAction;
             gameInput.Player.Click.canceled += ClickAction;
 
             gameInput.Enable();
@@ -43,13 +42,12 @@ namespace OthelloGameProj
             MousePos = obj.ReadValue<Vector2>();
         }
 
+
         private void OnDisable()
         {
-            gameInput.Player.MousePos.started -= MousePosAction;
             gameInput.Player.MousePos.performed -= MousePosAction;
             gameInput.Player.MousePos.canceled -= MousePosAction;
             gameInput.Player.Click.started -= ClickAction;
-            gameInput.Player.Click.performed -= ClickAction;
             gameInput.Player.Click.canceled -= ClickAction;
 
             gameInput?.Disable();

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using OthelloGameProj;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using TMPro;
@@ -39,7 +38,7 @@ namespace OthelloGameProj
         private readonly float IntervalTime = 1.0f;
         private readonly string BlackStoneStr = "Black";
         private readonly string WhiteStoneStr = "White";
-        private readonly Vector3 ScaleSize = Vector3.one * 1.3f;
+        private readonly Vector3 ScaleSize = Vector3.one;
 
         void Start()
         {
@@ -48,6 +47,7 @@ namespace OthelloGameProj
             optionObj.SetActive(false);
             handicap.onValueChanged.AddListener(delegate { OnValueChange(); });
             AudioController.Instance.Init();
+            sequence = DOTween.Sequence();
         }
 
         public void OpenOption()

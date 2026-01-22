@@ -27,8 +27,8 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "ff2578c4-f9e5-4bd8-9750-d785daa03ff5",
-                    "path": "<Mouse>/position",
+                    "id": "03065c8d-33e0-4564-b6f5-95033a5bec1a",
+                    "path": "<Pointer>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -38,8 +38,8 @@
                 },
                 {
                     "name": "",
-                    "id": "885577a1-6888-42fb-810f-3b8c288b4039",
-                    "path": "<Mouse>/leftButton",
+                    "id": "070093bf-c57b-4257-897d-c2e8f463e25c",
+                    "path": "<Pointer>/press",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
