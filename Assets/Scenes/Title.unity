@@ -1517,6 +1517,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 290064936738276361, guid: defc8cc92bc7e0948af80e53faf8e1c2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 395517319366113560, guid: defc8cc92bc7e0948af80e53faf8e1c2, type: 3}
       propertyPath: m_SizeDelta.x
       value: 100
@@ -1547,7 +1551,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 505731110055915552, guid: defc8cc92bc7e0948af80e53faf8e1c2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 52
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 698248094595151334, guid: defc8cc92bc7e0948af80e53faf8e1c2, type: 3}
       propertyPath: m_Pivot.x
@@ -1971,7 +1975,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5261565307885427040, guid: defc8cc92bc7e0948af80e53faf8e1c2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 850
+      value: 700
       objectReference: {fileID: 0}
     - target: {fileID: 5373966005614790164, guid: defc8cc92bc7e0948af80e53faf8e1c2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2403,6 +2407,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 3466708323403858514, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 3496697312873073298, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0.5
@@ -2422,6 +2430,10 @@ PrefabInstance:
     - target: {fileID: 5266198168101641204, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266198168101641204, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5934447569891800402, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

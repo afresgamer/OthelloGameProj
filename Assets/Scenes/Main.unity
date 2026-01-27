@@ -2757,65 +2757,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2952464862716621463, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2952464862716621463, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3466708323403858514, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3466708323403858514, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3466708323403858514, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3496697312873073298, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3496697312873073298, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5266198168101641204, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5266198168101641204, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5266198168101641204, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 5934447569891800402, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1104702013}
-    - target: {fileID: 5934447569891800402, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseOption
-      objectReference: {fileID: 0}
-    - target: {fileID: 5934447569891800402, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: OthelloGameProj.BtnController, Assembly-CSharp
-      objectReference: {fileID: 0}
     - target: {fileID: 7191507925909966806, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
       propertyPath: m_Name
       value: OptionPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 7191507925909966806, guid: 912aac2137954bc489670bde7a85bbd3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
